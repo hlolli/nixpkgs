@@ -122,6 +122,8 @@ let
 
             if ldd "$f" | fgrep 'not found'; then echo "in file $f"; fi
           done
+
+          ln -s $out/languages/llvm/native $out/lib/llvm
         '';
 
         propagatedBuildInputs = [ setJavaClassPath zlib ]; # $out/bin/native-image needs zlib to build native executables
@@ -147,6 +149,18 @@ let
           # Ahead-Of-Time compilation with --static
           $out/bin/native-image --no-server --static HelloWorld
           ./helloworld | fgrep 'Hello World'
+
+          # check sulong and llvm-toolchain
+          echo ${stdenv.lib.escapeShellArg ''
+            #include <stdio.h>
+            int main() {
+              printf("Hello World\n");
+              return 0;
+            }''} > hello.c
+
+          LLVM_TOOLCHAIN=$($out/bin/lli --print-toolchain-path) && \
+            $LLVM_TOOLCHAIN/clang ./hello.c -o hello
+          $out/bin/lli ./hello | fgrep 'Hello World'
         '';
 
         passthru.home = graalvmXXX-ce;
