@@ -4,12 +4,8 @@
 let repos = [
         "https://repo1.maven.org/maven2/"
         "https://repo.clojars.org/" ];
-
   in rec {
-      fetchmaven = pkgs.callPackage (pkgs.fetchurl {
-        url = "https://raw.githubusercontent.com/NixOS/nixpkgs/ba5e2222458a52357a3ba5873d88779d5c223269/pkgs/build-support/fetchmavenartifact/default.nix";
-        sha512 = "05m7i8hbhyfz7p2f106mfbsasjf04svd9xkgc26pl3shljrk0dfacz39wiwzm6xqw7czgrsx745vciram7al621v7634nfdq3m1x88a";
-      }) {};
+      fetchmaven = pkgs.fetchMavenArtifact;
       makePaths = {extraClasspaths ? null}:
         (pkgs.lib.concatMap
           (dep:
