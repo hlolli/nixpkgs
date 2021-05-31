@@ -32,10 +32,10 @@ mac_arm_sha256=$(nix-prefetch-url ${mac_arm_url})
 
 sed -i "s/x86_64-linux-version = \".*\"/x86_64-linux-version = \"${latest_linux_version}\"/" "$slack_nix"
 sed -i "s/x86_64-darwin-version = \".*\"/x86_64-darwin-version = \"${latest_mac_version}\"/" "$slack_nix"
-sed -i "s/aarm64-darwin-version = \".*\"/aarm64-darwin-version = \"${latest_mac_version}\"/" "$slack_nix"
+sed -i "s/aarch64-darwin-version = \".*\"/aarch64-darwin-version = \"${latest_mac_version}\"/" "$slack_nix"
 sed -i "s/x86_64-linux-sha256 = \".*\"/x86_64-linux-sha256 = \"${linux_sha256}\"/" "$slack_nix"
 sed -i "s/x86_64-darwin-sha256 = \".*\"/x86_64-darwin-sha256 = \"${mac_arm_sha256}\"/" "$slack_nix"
-sed -i "s/aarm64-darwin-sha256 = \".*\"/aarm64-darwin-sha256 = \"${mac_arm_sha256}\"/" "$slack_nix"
+sed -i "s/aarch64-darwin-sha256 = \".*\"/aarch64-darwin-sha256 = \"${mac_arm_sha256}\"/" "$slack_nix"
 
 if ! nix-build -A slack "$nixpkgs"; then
   echo "The updated slack failed to build."
