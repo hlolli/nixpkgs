@@ -24243,7 +24243,7 @@ in
 
   pmbootstrap = python3Packages.callPackage ../tools/misc/pmbootstrap/default.nix { };
 
-  slack = callPackage ../applications/networking/instant-messengers/slack { };
+  slack = callPackage ../applications/networking/instant-messengers/slack { sigtool = darwin.sigtool; };
 
   slack-cli = callPackage ../tools/networking/slack-cli { };
 
