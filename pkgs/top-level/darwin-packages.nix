@@ -161,6 +161,7 @@ impure-cmds // appleSourcePackages // chooseLibs // {
     xcode_9_1 xcode_9_2 xcode_9_4 xcode_9_4_1
     xcode_10_2 xcode_10_2_1 xcode_10_3
     xcode_11
+    xcode_12_5
     xcode;
 
   CoreSymbolication = callPackage ../os-specific/darwin/CoreSymbolication { };
