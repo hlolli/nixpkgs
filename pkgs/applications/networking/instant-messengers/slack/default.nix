@@ -31,7 +31,6 @@
 , nspr
 , nss
 , pango
-, sigtool
 , systemd
 , xdg-utils
 , xorg
@@ -176,7 +175,7 @@ let
 
     passthru.updateScript = ./update.sh;
 
-    nativeBuildInputs = [ undmg ] ++ lib.optional stdenv.isAarch64 [ sigtool ];
+    nativeBuildInputs = [ undmg ];
 
     sourceRoot = "Slack.app";
 
