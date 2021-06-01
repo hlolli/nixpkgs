@@ -1,5 +1,5 @@
 { lib
-, localSystem, crossSystem, config, overlays, crossOverlays ? []
+, localSystem ? builtins.currentSystem, crossSystem, config, overlays, crossOverlays ? []
 # Allow passing in bootstrap files directly so we can test the stdenv bootstrap process when changing the bootstrap tools
 , bootstrapFiles ?
   if localSystem.isAarch64 then
