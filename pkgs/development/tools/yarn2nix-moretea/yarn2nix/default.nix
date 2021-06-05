@@ -64,7 +64,7 @@ in rec {
   mkYarnModules = {
     name ? "${pname}-${version}", # safe name and version, e.g. testcompany-one-modules-1.0.0
     pname, # original name, e.g @testcompany/one
-    version,
+    version ? "unknown",
     packageJSON,
     yarnLock,
     yarnNix ? mkYarnNix { inherit yarnLock; },
@@ -122,7 +122,7 @@ in rec {
         cp ${yarnLock} ./yarn.lock
         chmod +w ./yarn.lock
 
-        yarn config --offline set yarn-offline-mirror ${offlineCache}
+        yarn config set yarn-offline-mirror ${offlineCache}
 
         # Do not look up in the registry, but in the offline cache.
         ${fixup_yarn_lock}/bin/fixup_yarn_lock yarn.lock
@@ -348,7 +348,7 @@ in rec {
         rm -f .yarnrc
         cd $out/libexec/${pname}/deps/${pname}
         mkdir -p $out/tarballs/
-        yarn pack --offline --ignore-scripts --filename $out/tarballs/${baseName}.tgz
+        yarn pack --filename $out/tarballs/${baseName}.tgz
       '';
 
       passthru = {
