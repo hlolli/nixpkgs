@@ -45,6 +45,7 @@ let
 
   # These are the providers that don't fall in line with the default model
   special-providers = {
+    inherit (import ./cloudposse { inherit callPackage; }) terraform-aws-tfstate-backend;
     acme = automated-providers.acme.overrideAttrs (attrs: {
       prePatch = attrs.prePatch or "" + ''
         substituteInPlace go.mod --replace terraform-providers/terraform-provider-acme getstackhead/terraform-provider-acme
