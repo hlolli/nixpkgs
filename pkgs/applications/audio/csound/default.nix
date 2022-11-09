@@ -1,4 +1,14 @@
-{ lib, stdenv, fetchFromGitHub, cmake, libsndfile, libsamplerate, flex, bison, boost, gettext
+{ lib
+, stdenv
+, fetchFromGitHub
+, cmake
+, libsndfile
+, libsamplerate
+, flex
+, bison
+, boost
+, gettext
+, csound-plugins
 , Accelerate
 , AudioUnit
 , CoreAudio
@@ -10,16 +20,17 @@
 , liblo ? null
 , ladspa-sdk ? null
 , fluidsynth ? null
-# , gmm ? null  # opcodes don't build with gmm 5.1
+  # , gmm ? null  # opcodes don't build with gmm 5.1
 , eigen ? null
 , curl ? null
 , tcltk ? null
 , fltk ? null
+, withPlugins ? false
 }:
 
 stdenv.mkDerivation rec {
   pname = "csound";
-  version = "6.17.0";
+  version = "b16f019d70931b60f1348328d05936e7a3d95e2a";
 
   hardeningDisable = [ "format" ];
 
@@ -27,7 +38,7 @@ stdenv.mkDerivation rec {
     owner = "csound";
     repo = "csound";
     rev = version;
-    sha256 = "sha256-O19jm3JxHg4TcQzWQZu1uFjfYN2FR41fCRq5YGnTGD0=";
+    sha256 = "sha256-s8TsPAVDtPKkqtTuFB54AtUQHP3PknnL8Wpt4xKBLqQ=";
   };
 
   cmakeFlags = [ "-DBUILD_CSOUND_AC=0" ] # fails to find Score.hpp
@@ -37,23 +48,41 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ cmake flex bison gettext ];
   buildInputs = [ libsndfile libsamplerate boost ]
     ++ lib.optionals stdenv.isDarwin [
-      Accelerate AudioUnit CoreAudio CoreMIDI portaudio
-    ] ++ lib.optionals stdenv.isLinux (builtins.filter (optional: optional != null) [
-      alsa-lib libpulseaudio libjack2
-      liblo ladspa-sdk fluidsynth eigen
-      curl tcltk fltk
-    ]);
+    Accelerate
+    AudioUnit
+    CoreAudio
+    CoreMIDI
+    portaudio
+  ] ++ lib.optionals stdenv.isLinux (builtins.filter (optional: optional != null) [
+    alsa-lib
+    libpulseaudio
+    libjack2
+    liblo
+    ladspa-sdk
+    fluidsynth
+    eigen
+    curl
+    tcltk
+    fltk
+  ]);
 
-  postInstall = lib.optional stdenv.isDarwin ''
+  postInstall = ''
+    mkdir -p $out/include
+    cp -r ../include/* $out/include
+    cp include/float-version.h $out/include
+    cp include/version.h $out/include
+  '' + lib.optionalString stdenv.isDarwin ''
     mkdir -p $out/Library/Frameworks
     ln -s $out/lib/CsoundLib64.framework $out/Library/Frameworks
+  '' + lib.optionalString (stdenv.isDarwin && withPlugins) ''
+    ln -s ${csound-plugins}/Library/csound/6.0/plugins64/* $out/lib/CsoundLib64.framework/Resources/Opcodes64
   '';
 
   meta = with lib; {
     description = "Sound design, audio synthesis, and signal processing system, providing facilities for music composition and performance on all major operating systems and platforms";
     homepage = "https://csound.com/";
     license = licenses.lgpl21Plus;
-    maintainers = [maintainers.marcweber];
+    maintainers = [ maintainers.marcweber maintainers.hlolli ];
     platforms = platforms.unix;
   };
 }

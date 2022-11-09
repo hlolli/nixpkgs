@@ -27692,6 +27692,15 @@ with pkgs;
 
   csound-manual = callPackage ../applications/audio/csound/csound-manual { };
 
+  csound-plugins = callPackage ../applications/audio/csound/plugins.nix {
+    inherit (pkgs.darwin.apple_sdk.frameworks) Accelerate;
+  };
+
+  csoundWithPlugins = callPackage ../applications/audio/csound {
+    inherit (pkgs.darwin.apple_sdk.frameworks) Accelerate AudioUnit CoreAudio CoreMIDI;
+    withPlugins = true;
+  };
+
   csound-qt = libsForQt5.callPackage ../applications/audio/csound/csound-qt {
     python = python27;
   };
