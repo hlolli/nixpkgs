@@ -87,11 +87,13 @@ stdenv.mkDerivation (rec {
   #
   # See here for context:
   # https://github.com/NixOS/nixpkgs/pull/194634#issuecomment-1272129132
-  ++ lib.optional (
+  ++ lib.optional
+    (
       stdenv.targetPlatform.isDarwin
-      && !stdenv.targetPlatform.isAarch64
-      && (lib.versionAtLeast release_version "15")
-    ) (
+        && !stdenv.targetPlatform.isAarch64
+        && (lib.versionAtLeast release_version "15")
+    )
+    (
       runCommand "bsm-audit-session-header" { } ''
         install -Dm444 \
           "${lib.getDev darwin.apple_sdk.sdk}/include/bsm/audit_session.h" \
@@ -152,7 +154,11 @@ stdenv.mkDerivation (rec {
 
   postInstall = ''
     wrapProgram $out/bin/lldb --prefix PYTHONPATH : $lib/${python3.sitePackages}/
-
+    # resymlink lldb-argdumper to the one in the bin directory
+    if [ -e "$out/${python3.sitePackages}/lldb/lldb-argdumper" ] ; then
+      rm -f $out/${python3.sitePackages}/lldb/lldb-argdumper
+      ln -s $out/bin/lldb-argdumper $out/${python3.sitePackages}/lldb/lldb-argdumper
+    fi
     # Editor support
     # vscode:
     install -D ../tools/lldb-vscode/package.json $out/share/vscode/extensions/llvm-org.lldb-vscode-0.1.0/package.json
